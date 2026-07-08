@@ -1,0 +1,10 @@
+# data ingestion + eda notebooks. versions match the tested env (python 3.10).
+pandas>=2.0
+numpy>=1.26,<2.0
+yfinance>=0.2.60
+financedatabase>=2.0    # the etf/fund universe + categories
+PyYAML>=6.0
+pyarrow>=15.0
+matplotlib>=3.8
+seaborn>=0.13
+

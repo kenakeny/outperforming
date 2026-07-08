@@ -1,0 +1,23 @@
+# universe: every etf on these exchanges, pulled from financedatabase.
+# peer group = the category financedatabase reports (large cap / emerging mkts / corp bonds / ...).
+exchanges: [PCX, NMS, NGM, NYQ, ASE]   # us: nyse arca, nasdaq, nasdaq gm, nyse, amex
+min_days: 252                          # drop funds with < ~1y of history
+
+data:
+  period: "15y"
+  interval: "1d"
+  auto_adjust: true
+
+# label = fund's forward return minus its category median, bucketed by +/- threshold
+labels:
+  horizon: 5           # trading days ahead
+  threshold: 0.005     # dead-band around the category median (fraction) - tuned to the universe spread
+  min_group: 3         # a category needs >= this many funds for a meaningful median
+
+paths:
+  raw: data/raw
+  processed: data/processed
+
+# later: news/social sentiment features
+sentiment:
+  enabled: false
