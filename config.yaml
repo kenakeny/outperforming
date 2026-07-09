@@ -2,11 +2,26 @@
 # peer group = the category financedatabase reports (large cap / emerging mkts / corp bonds / ...).
 exchanges: [PCX, NMS, NGM, NYQ, ASE]   # us: nyse arca, nasdaq, nasdaq gm, nyse, amex
 min_days: 252                          # drop funds with < ~1y of history
+exclude_leveraged: true                # drop 2x/3x/inverse etfs - their returns arent peer-comparable
+max_daily_move: 0.5                     # drop funds with any |1d return| above this (bad ticks / unadjusted splits)
+exclude_delisted: true                  # drop dead funds whose prices stop >30d before the panel end (e.g. ACTV)
+                                        # off = keep delisted funds (less survivorship bias, but messier data)
 
 data:
-  period: "15y"
+  period: "10y"
   interval: "1d"
   auto_adjust: true
+
+# technical features (notebook 03). all scale-free so funds are comparable.
+features:
+  return_windows: [5, 10, 20]      # rolling % returns
+  vol_window: 20                   # realized-vol lookback
+  vol_annualize: true
+  sma_windows: [10, 20, 50]        # price distance from these smas
+  ema_windows: [10, 20, 50]
+  rsi_period: 14
+  macd: {fast: 12, slow: 26, signal: 9}
+  bollinger: {window: 20, num_std: 2.0}
 
 # label = fund's forward return minus its category median, bucketed by +/- threshold
 labels:
