@@ -1,0 +1,71 @@
+{
+  "catboost_top10": {
+    "gross": {
+      "ann_excess": 0.031239373713409117,
+      "ann_vol": 0.07277983959171964,
+      "info_ratio": 0.4292311426990738,
+      "hit_rate": 0.5797101449275363,
+      "mean_per_rebal": 0.0024793153740800887
+    },
+    "net": {
+      "ann_excess": 0.02179612893249803,
+      "ann_vol": 0.07291047637815594,
+      "info_ratio": 0.29894371858785684,
+      "hit_rate": 0.5652173913043478,
+      "mean_per_rebal": 0.0017298515025792089
+    },
+    "n_rebalances": 69,
+    "mean_turnover": 1.5313210282024137,
+    "mean_spread_bps": 4.836209516170626,
+    "mean_cost_per_rebal": 0.0007494638715008797,
+    "breakeven_spread_bps": 16.190696323098926,
+    "ann_bench": 0.09073728481334968,
+    "per_day_rank_ic": 0.08184156137513524
+  },
+  "catboost_top20": {
+    "gross": {
+      "ann_excess": 0.023932770517143844,
+      "ann_vol": 0.05701502666473967,
+      "info_ratio": 0.4197625067839319,
+      "hit_rate": 0.5797101449275363,
+      "mean_per_rebal": 0.0018994262315193528
+    },
+    "net": {
+      "ann_excess": 0.01712177079114746,
+      "ann_vol": 0.057161805183404024,
+      "info_ratio": 0.2995316669271054,
+      "hit_rate": 0.5362318840579711,
+      "mean_per_rebal": 0.001358870697710116
+    },
+    "n_rebalances": 69,
+    "mean_turnover": 1.127035808435585,
+    "mean_spread_bps": 4.774729192938561,
+    "mean_cost_per_rebal": 0.0005405555338092379,
+    "breakeven_spread_bps": 16.853290883063487,
+    "ann_bench": 0.09073728481334968,
+    "per_day_rank_ic": 0.08184156137513524
+  },
+  "catboost_top33": {
+    "gross": {
+      "ann_excess": 0.025351340914242883,
+      "ann_vol": 0.04589020751062275,
+      "info_ratio": 0.5524346541334447,
+      "hit_rate": 0.5507246376811594,
+      "mean_per_rebal": 0.0020120111836700702
+    },
+    "net": {
+      "ann_excess": 0.021317673445707112,
+      "ann_vol": 0.045974034876971215,
+      "info_ratio": 0.4636894173581731,
+      "hit_rate": 0.5362318840579711,
+      "mean_per_rebal": 0.0016918788448973899
+    },
+    "n_rebalances": 69,
+    "mean_turnover": 0.6619478078571779,
+    "mean_spread_bps": 4.803522822668006,
+    "mean_cost_per_rebal": 0.0003201323387726794,
+    "breakeven_spread_bps": 30.395314551811047,
+    "ann_bench": 0.09073728481334968,
+    "per_day_rank_ic": 0.08184156137513524
+  }
+}

@@ -23,11 +23,30 @@ features:
   macd: {fast: 12, slow: 26, signal: 9}
   bollinger: {window: 20, num_std: 2.0}
 
+# v2 peer-relative features (notebook 06). windows for the new cross-sectional / residual features.
+features_v2:
+  corr_window: 60        # fund-vs-category correlation + beta lookback ("benchmark-hugger" score)
+  beat_window: 20        # daily win-rate vs category mean lookback
+  high_window: 252       # 52-week-high anchor (min 60 obs for young funds)
+  skip_mom: {skip: 5, window: 60}   # quarterly momentum skipping the reversal week
+
 # label = fund's forward return minus its category median, bucketed by +/- threshold
 labels:
   horizon: 5           # trading days ahead
   threshold: 0.005     # dead-band around the category median (fraction) - tuned to the universe spread
   min_group: 3         # a category needs >= this many funds for a meaningful median
+
+# baseline model (notebook 04) - time-based split, no shuffle
+split:
+  date: "2023-12-31"   # train on <= this date, test after
+
+# full model (notebook 05) - walk-forward eval
+model:
+  walkforward_start: 2021   # first test year for expanding-window folds
+  embargo_days: 5           # purge gap in TRADING days between the last train label window and test
+                             # start (= label horizon). 04/05 derive this from labels.horizon directly
+                             # rather than reading this key, so the purge can't drift out of sync;
+                             # kept here for documentation.
 
 paths:
   raw: data/raw

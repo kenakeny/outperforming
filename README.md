@@ -1,20 +1,189 @@
-# fund short-term outperformance — data & eda
+# Overperforming
 
-predict whether an etf will **Outperform**, be **Neutral**, or **Underperform** its category
-peers over the next 5 trading days, using only public data (yahoo finance + financedatabase).
+An end-to-end research application for ranking exchange-traded funds by their expected **peer-relative return over the next five trading days**.
 
-right now this repo covers **data ingestion + eda + feature engineering**
+The project combines a reproducible market-data pipeline, leakage-aware walk-forward evaluation, six trained classification models, a FastAPI service, and a React screener. It predicts one of three classes—`outperform`, `neutral`, or `underperform`—relative to funds in the same category. It does **not** predict an absolute price target or guarantee positive returns.
 
-## structure
+## What is included
 
+- A staged ETF data pipeline: extraction, cleaning, feature engineering, support/resistance features, labels, and dataset assembly.
+- Logistic regression, XGBoost, CatBoost, and LSTM research paths.
+- Purged walk-forward validation with explicit label-window overlap checks.
+- A FastAPI API for model discovery, ranked signals, search, facets, categories, ticker history, and CSV uploads.
+- A React/Vite interface with US-market and Saudi-market views.
+- A historical Saudi transfer-learning evaluation. This view is realized backtest history, not a live Saudi trading signal.
+- Unit and integration tests covering pipeline contracts, lookahead protection, serving, search/filter behavior, CSV ingestion, and Saudi endpoints.
+
+## Architecture
+
+```text
+Yahoo Finance + fund metadata
+            |
+            v
+   staged ETL pipeline  --->  feature panel + peer-relative labels
+            |                              |
+            v                              v
+    walk-forward training  ----------> trained model artifacts
+                                             |
+                                             v
+                                      FastAPI service
+                                             |
+                                             v
+                                      React screener
 ```
-config.yaml     # exchanges, history length, features, labels etc
-notebooks/
-  01_data_ingestion.ipynb   # financedatabase universe + yfinance prices -> data/raw/
-  02_eda.ipynb              # explore + label -> data/processed/labels.parquet
-  03_features.ipynb         # technical features + modeling dataset -> data/processed/
-data/
-  raw/         prices.parquet, metadata.parquet (+ csv copies)
-  processed/   labels.parquet, features.parquet, dataset.parquet
-reports/       eda dashboard pngs (regen: python reports/make_figures.py)
+
+All serving paths use `inference.py`, which reads feature names from each trained artifact and rejects incompatible feature panels rather than silently filling missing inputs.
+
+## Quick start
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18+
+
+Create and activate a virtual environment, then install the Python dependencies:
+
+```bash
+python -m venv .venv
+
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
+
+Install and build the frontend:
+
+```bash
+npm --prefix web install
+npm --prefix web run build
+```
+
+Build the local dataset before using the live US screener:
+
+```bash
+python etl.py --status
+python etl.py --stages all
+```
+
+Then start the application:
+
+```bash
+uvicorn serve.api:app --host 127.0.0.1 --port 8000
+```
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Interactive API documentation is available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+Downloaded data is intentionally excluded from Git. A fresh clone therefore needs the ETL step before date-based US endpoints can return predictions. The CSV-upload endpoint can score a compatible OHLCV file without publishing the local research dataset.
+
+### Frontend development
+
+Run the API on port 8000, then start Vite in a second terminal:
+
+```bash
+npm --prefix web run dev
+```
+
+Vite serves the frontend at [http://localhost:5173](http://localhost:5173) and proxies API calls to FastAPI.
+
+## Data and training
+
+The main pipeline is controlled by `config.yaml`:
+
+```bash
+python etl.py --status       # inspect stage freshness
+python etl.py --stages all   # rebuild the complete dataset
+python train_models.py       # train the 5-day model family
+pytest                       # run the fast test suite
+pytest -m slow               # include full-panel parity checks
+```
+
+Optional news features use Polygon or Finnhub. Copy the example environment file and add only the key you need:
+
+```bash
+cp .env.example .env
+python fetch_etf_news.py --dry-run
+python fetch_etf_news_finnhub.py --dry-run
+```
+
+Never commit `.env`; it is ignored by Git.
+
+## Evaluation methodology
+
+The target is a forward five-trading-day return ranked within each date and ETF category. Because adjacent labels overlap, ordinary random splits would overstate performance. The repository uses:
+
+- expanding-window, time-ordered folds;
+- a trading-day purge between training and evaluation windows;
+- assertions that no training label window reaches the test period;
+- feature truncation tests that recompute features using only information available at that timestamp;
+- shuffled-label and planted-leak checks;
+- an additional non-overlapping evaluation sampled every fifth trading day.
+
+The checked-in scorecard in `models/results.json` records the following pooled walk-forward results for the served model family:
+
+| Model | Accuracy | Macro F1 |
+| --- | ---: | ---: |
+| Logistic regression + S/R | 0.372 | 0.363 |
+| Logistic regression + S/R + news | 0.372 | 0.364 |
+| XGBoost + S/R | 0.423 | 0.416 |
+| XGBoost + S/R + news | 0.424 | 0.416 |
+| CatBoost + S/R | 0.422 | 0.412 |
+| CatBoost + S/R + news | 0.422 | 0.412 |
+
+These are historical research results on repeatedly inspected folds, not expected live returns. Treat the existing folds as development data and validate future changes on newly accumulated out-of-sample periods.
+
+## API overview
+
+| Method | Route | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Service, model, and data readiness |
+| `GET` | `/models`, `/metrics` | Model registry and stored evaluation metrics |
+| `GET` | `/dates` | Available scoring dates |
+| `GET` | `/search`, `/facets` | Fund lookup and filter vocabulary |
+| `GET` | `/signals`, `/categories`, `/picks` | Ranked and aggregated US signals |
+| `GET` | `/tickers/{ticker}` | Fund metadata, scores, and available price history |
+| `POST` | `/predict/csv` | Score uploaded OHLCV data |
+| `GET` | `/saudi/*` | Historical Saudi evaluation records and benchmarks |
+
+The Saudi endpoints include `is_realized_history: true` in their responses so clients can distinguish the evaluation record from live US scoring.
+
+## Repository layout
+
+```text
+config.yaml             pipeline, label, split, and path configuration
+etl.py                  staged data pipeline
+core.py                 shared feature and label implementation
+inference.py            single model-loading and scoring path
+train_models.py         primary model training and walk-forward evaluation
+saudi.py                Saudi transfer-learning experiment
+serve/
+  api.py                FastAPI application
+  universe.py           search, facets, and filters
+  csv_input.py          uploaded OHLCV validation and feature construction
+  saudi.py              historical Saudi results adapter
+web/
+  src/                  React application and components
+tests/                  pipeline, leakage, API, and UI-contract tests
+notebooks/              ingestion, EDA, features, and model research
+experiments/            reproducible experimental scripts; outputs are ignored
+models/                 compact served model artifacts and scorecard
+reports/                methodology notes and lightweight report inputs
+```
+
+## Known limitations
+
+- Fund membership and data-quality filters use each fund's available history, which introduces mild full-sample selection lookahead.
+- Category metadata is current metadata applied across history; free point-in-time classifications are not available.
+- Funds without a usable category cannot receive a peer-relative label.
+- The Saudi section is a saved walk-forward evaluation record and must not be presented as a current recommendation.
+- Model quality depends on public data availability, classification quality, and market regime stability.
+
+## License and disclaimer
+
+Released under the [MIT License](LICENSE).
+
+This repository is for research and educational use only. It is not investment advice. Historical model performance and backtests do not guarantee future results.

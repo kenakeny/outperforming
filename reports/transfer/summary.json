@@ -1,0 +1,13 @@
+{
+  "saudi_only|catboost": 0.3758,
+  "saudi_only|logreg": 0.372,
+  "us_zeroshot|xgboost": 0.3683,
+  "us_zeroshot|lightgbm": 0.3674,
+  "saudi_only|xgboost": 0.3665,
+  "saudi_only|lightgbm": 0.3607,
+  "us_finetune|lstm": 0.357,
+  "us_zeroshot|lstm": 0.3557,
+  "saudi_only|lstm": 0.3494,
+  "random|-": 0.3466,
+  "us_zeroshot|logreg": 0.3414
+}

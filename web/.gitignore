@@ -1,0 +1,6 @@
+# Scoped to web/ deliberately: the repo-root .gitignore is yours to manage.
+node_modules/
+dist/
+*.local
+.vite/
+*.tsbuildinfo
