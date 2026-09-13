@@ -132,8 +132,8 @@ basket per month discards nearly all the information and most of the statistical
 ## Reproducing
 
 ```bash
-python overfit_audit.py            # reuses cached grid (seconds)
-python overfit_audit.py --rebuild  # re-runs all 32 portfolio constructions
+python -m scripts.evaluation.overfit_audit            # cached grid
+python -m scripts.evaluation.overfit_audit --rebuild  # rebuild grid
 ```
 
 Outputs `reports/overfit_audit/audit.json` and `config_returns.csv`.

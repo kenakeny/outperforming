@@ -1,0 +1,45 @@
+{
+  "name": "blend_xgb_gnn",
+  "n_test": 178560,
+  "dir_acc_on_extremes": 0.5538,
+  "rank_ic": 0.0852,
+  "under_to_over": 0.2976,
+  "over_to_under": 0.3145,
+  "macro_f1_terciles": 0.3801,
+  "accuracy_terciles": 0.3801,
+  "gated": {
+    "K3": {
+      "n_calls": 5280,
+      "win_rate": 0.4561,
+      "mean_payoff": 0.01574,
+      "win_loss_ratio": 1.483
+    },
+    "K2": {
+      "n_calls": 3480,
+      "win_rate": 0.4621,
+      "mean_payoff": 0.01907,
+      "win_loss_ratio": 1.624
+    }
+  },
+  "confusion_matrix": [
+    [
+      23128,
+      18676,
+      17716
+    ],
+    [
+      17673,
+      22396,
+      19451
+    ],
+    [
+      18719,
+      18448,
+      22353
+    ]
+  ],
+  "w_xgb": 0.3,
+  "horizon": 10,
+  "window_years": 1,
+  "val_ic_at_w": 0.152
+}

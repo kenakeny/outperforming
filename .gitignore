@@ -76,11 +76,13 @@ reports/**/run*.log
 # Trained artifacts are generated locally. The six compact demo artifacts used
 # by the API are force-added to the repository during release preparation.
 models/
-model_bundle/
 
 # Local archives and bulk exports
-archive/
-share/
+archive/*
+!archive/scripts/
+!archive/scripts/**
+archive/scripts/__pycache__/
+archive/scripts/**/*.py[cod]
 *.rar
 *.zip
 *.7z
@@ -95,3 +97,4 @@ TECHNICAL_INVENTORY_AUDIT.md
 # Temporary repository-repair workspace
 .git-repair-checkout/
 .git-corrupt-backup/
+.history-recovery/

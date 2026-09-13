@@ -106,8 +106,8 @@ Optional news features use Polygon or Finnhub. Copy the example environment file
 
 ```bash
 cp .env.example .env
-python fetch_etf_news.py --dry-run
-python fetch_etf_news_finnhub.py --dry-run
+python -m scripts.data.fetch_etf_news --dry-run
+python -m scripts.data.fetch_etf_news_finnhub --dry-run
 ```
 
 Never commit `.env`; it is ignored by Git.
@@ -160,6 +160,11 @@ core.py                 shared feature and label implementation
 inference.py            single model-loading and scoring path
 train_models.py         primary model training and walk-forward evaluation
 saudi.py                Saudi transfer-learning experiment
+scripts/
+  data/                  dataset builders and optional news ingestion
+  training/              alternate models, tuning, and ablations
+  evaluation/            backtests, plots, and overfit audits
+  automation/            notebook and experiment runners
 serve/
   api.py                FastAPI application
   universe.py           search, facets, and filters
@@ -172,6 +177,8 @@ notebooks/              ingestion, EDA, features, and model research
 experiments/            reproducible experimental scripts; outputs are ignored
 models/                 compact served model artifacts and scorecard
 reports/                methodology notes and lightweight report inputs
+archive/scripts/         retained legacy scripts for historical reference
+share/                   self-contained dataset-building handoff
 ```
 
 ## Known limitations

@@ -1,0 +1,10 @@
+pandas>=2.0
+numpy>=1.26,<2.0
+pyarrow>=15.0
+scikit-learn>=1.7
+xgboost>=3.2
+torch>=2.5          # only needed without --no-gnn
+
+# only needed if you generate the data yourself with build_dataset.py
+yfinance>=0.2.60
+financedatabase>=2.0
