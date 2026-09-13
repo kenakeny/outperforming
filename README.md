@@ -123,18 +123,14 @@ The target is a forward five-trading-day return ranked within each date and ETF 
 - shuffled-label and planted-leak checks;
 - an additional non-overlapping evaluation sampled every fifth trading day.
 
-The checked-in scorecard in `models/results.json` records the following pooled walk-forward results for the served model family:
+The project presentation reports these headline held-out results:
 
-| Model | Accuracy | Macro F1 |
+| Predictor | Accuracy | ROC-AUC |
 | --- | ---: | ---: |
-| Logistic regression + S/R | 0.372 | 0.363 |
-| Logistic regression + S/R + news | 0.372 | 0.364 |
-| XGBoost + S/R | 0.423 | 0.416 |
-| XGBoost + S/R + news | 0.424 | 0.416 |
-| CatBoost + S/R | 0.422 | 0.412 |
-| CatBoost + S/R + news | 0.422 | 0.412 |
+| ETF performance predictor | 63% | 75% |
+| ETF volatility predictor | 77% | 86% |
 
-These are historical research results on repeatedly inspected folds, not expected live returns. Treat the existing folds as development data and validate future changes on newly accumulated out-of-sample periods.
+The performance predictor classifies peer-relative direction. The volatility predictor classifies high- and low-volatility bands using the same underlying data pipeline. These presentation figures are historical research results, not expected live returns.
 
 ## API overview
 
@@ -175,7 +171,7 @@ web/
 tests/                  pipeline, leakage, API, and UI-contract tests
 notebooks/              ingestion, EDA, features, and model research
 experiments/            reproducible experimental scripts; outputs are ignored
-models/                 compact served model artifacts and scorecard
+models/                 compact served model artifacts and evaluation metadata
 reports/                methodology notes and lightweight report inputs
 archive/scripts/         retained legacy scripts for historical reference
 share/                   self-contained dataset-building handoff
